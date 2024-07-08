@@ -12,20 +12,21 @@ module.exports = (sequelize, DataTypes) => {
         productId: {
              type: DataTypes.INTEGER,
              allowNull: false,
-             unique: {
-                args: true,
-                msg: 'User Already enrolled in this product!'
-            },
              references: {
                 model: 'Product',
                 key: 'id' 
             }
         },
+    }, {
+        timestamps: true,
+        // Define composite primary key
+        primaryKey: ['userId', 'productId'],
     });
 
     UserProduct.associate = function(models) {
-        UserProduct.belongsTo(models.User, { foreignKey: 'userId' });
-        UserProduct.belongsTo(models.Product, { foreignKey: 'productId' });
+        UserProduct.belongsTo(models.User, { foreignKey: 'userId', as: 'user' });
+        UserProduct.belongsTo(models.Product, { foreignKey: 'productId', as: 'product' });
     };
+    
     return UserProduct;
 };

@@ -17,13 +17,15 @@ app.listen(port, () => {
 require("./src/config/sequelize");
 require("./config/config");
 require("./src/models/index");
+require("./cronJob");
 
 const designationRoutes = require('./src/routes/designationRoutes');
 const userRoutes = require('./src/routes/userRoutes');
 const productRoutes = require('./src/routes/productRoutes');
 const serverPortRoutes = require('./src/routes/serverPortRoutes');
 const taskRoutes = require('./src/routes/taskRoutes');
-const userProductRoutes = require('./src/routes/userProductRoutes');
+const userProductRoutes = require('./src/routes/userProductRoutes');''
+const notificationRoutes  = require('./src/routes/notificationRoutes');
 
 
 app.use('/api/designations', designationRoutes);
@@ -32,7 +34,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/server-ports', serverPortRoutes);
 app.use('/api/tasks', taskRoutes);
 app.use('/api', userProductRoutes);
-
+app.use('/api/notifications', notificationRoutes);
 
 // 404 Not Found Middleware
 app.use((req, res, next) => {

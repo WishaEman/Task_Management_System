@@ -11,7 +11,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
         },
         description: {
-            type: DataTypes.TEXT,
+            type: DataTypes.STRING,
             allowNull: true,
         },
         status: {
@@ -80,33 +80,54 @@ module.exports = (sequelize, DataTypes) => {
         },
     }, {
         hooks: {
-            afterCreate: async (task, options) => {
-                // Log task creation
-                await sequelize.models.TaskLog.create({
-                    taskId: task.id,
-                    previousState: 'backlog',
-                    currentState: task.status,
-                });
-            },
             afterUpdate: async (task, options) => {
-                const previousState = task.previous('status');
-                const currentState = task.status;
+                if (options.hook === false) return; // Skip hook logic if not triggered by the hook itself
 
-                if (previousState !== currentState) {
-                    // Log status change
-                    await sequelize.models.TaskLog.create({
-                        taskId: task.id,
-                        status: currentState,
-                        previousState: previousState,
-                        currentState: currentState,
-                    });
+                if (task.changed('assignedTo')) {
+                    const userId = task.assignedTo;
+                    if (userId) {
+                        await sequelize.models.Notification.create({
+                            message: `Task ${task.title} has been assigned to you.`,
+                            userId: userId,
+                            routePath: `/tasks/${task.id}`
+                        });
 
-                    // Free the server port if task status is 'Done'
-                    if (currentState === 'Done' && task.serverPortId) {
-                        const port = await task.getServerPort();
-                        if (port) {
-                            port.status = 'available';
-                            await port.save();
+                        // Assign a server port to the task
+                        const availablePort = await sequelize.models.ServerPort.findOne({
+                            where: { status: 'available' },
+                            order: [['portNumber', 'ASC']]
+                        });
+
+                        if (availablePort) {
+                            // Disable hook logic for this update to prevent recursion
+                            await task.update({ serverPortId: availablePort.id }, { hook: false });
+                            await availablePort.update({ status: 'assigned' });
+                        }
+                    }
+                }
+
+                if (task.changed('status')) {
+                    const previousState = task.previous('status');
+                    const currentState = task.status;
+
+                    if (previousState !== currentState) {
+                        await sequelize.models.TaskLog.create({
+                            taskId: task.id,
+                            previousState: previousState,
+                            currentState: currentState,
+                            changedAt: new Date()
+                        });
+
+                        // Free the server port if the status changes to 'Done'
+                        if (currentState === 'Done') {
+                            const serverPort = await sequelize.models.ServerPort.findOne({
+                                where: { id: task.serverPortId }
+                            });
+
+                            if (serverPort) {
+                                await serverPort.update({ status: 'available' });
+                                await task.update({ serverPortId: null }, { hook: false });
+                            }
                         }
                     }
                 }
@@ -122,7 +143,6 @@ module.exports = (sequelize, DataTypes) => {
         Task.belongsTo(models.Task, { foreignKey: 'parentTaskId', as: 'parentTask' });
         Task.hasMany(models.Task, { foreignKey: 'parentTaskId', as: 'subTasks' });
         Task.hasMany(models.TaskLog, { foreignKey: 'taskId', as: 'logs' });
-        Task.hasMany(models.Notification, { foreignKey: 'taskId', as: 'notifications' });
     };
 
     return Task;

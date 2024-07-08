@@ -1,6 +1,7 @@
 const db = require("@models/index");
 const User = db.User;
 const UserProduct = db.UserProduct;
+const Product = db.Product;
 
 type UserInstance = InstanceType<typeof User>;
 
@@ -19,7 +20,11 @@ export class UserService {
 
   async getAllUsers(): Promise<UserInstance[]> {
     return User.findAll({
-      include: ['designation', 'manager', 'subordinates', 'products'],
+      include: [{
+        model: Product,
+        as: 'products',
+        through: { attributes: [] } // exclude the UserProduct association details
+    }]
     });
   }
 
@@ -44,7 +49,6 @@ export class UserService {
   async getSubordinates(userId: number): Promise<UserInstance[] | string> {
     const subordinates = await User.findAll({
       where: { managerId: userId },
-      include: ['designation'],
     });
 
     if (subordinates.length === 0) return 'This user is not a manager and has no subordinates.';
@@ -54,7 +58,7 @@ export class UserService {
   
   async getManager(userId: number): Promise<UserInstance | string> {
     const user = await User.findByPk(userId, {
-      include: [{ model: User, as: 'manager', include: ['designation'] }]
+      include: [{ model: User, as: 'manager'}]
     });
 
     if (!user) return 'User not found.';

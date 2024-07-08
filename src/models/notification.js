@@ -7,7 +7,7 @@ module.exports = (sequelize, DataTypes) => {
             primaryKey: true,
         },
         message: {
-            type: DataTypes.TEXT,
+            type: DataTypes.STRING,
             allowNull: false,
         },
         read: {
@@ -23,12 +23,8 @@ module.exports = (sequelize, DataTypes) => {
             },
             allowNull: false,
         },
-        taskId: {
-            type: DataTypes.INTEGER,
-            references: {
-                model: 'Task',
-                key: 'id',
-            },
+        routePath: {
+            type: DataTypes.STRING,
             allowNull: false,
         },
         createdAt: {
@@ -36,11 +32,12 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: DataTypes.NOW,
         },
+    }, {
+        timestamps: false,
     });
 
     Notification.associate = function(models) {
         Notification.belongsTo(models.User, { foreignKey: 'userId', as: 'user' });
-        Notification.belongsTo(models.Task, { foreignKey: 'taskId', as: 'task' });
     };
 
     return Notification;

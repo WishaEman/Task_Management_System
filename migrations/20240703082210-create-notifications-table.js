@@ -10,7 +10,7 @@ module.exports = {
         primaryKey: true,
       },
       message: {
-        type: Sequelize.TEXT,
+        type: Sequelize.STRING,
         allowNull: false,
       },
       read: {
@@ -28,15 +28,9 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
       },
-      taskId: {
-        type: Sequelize.INTEGER,
-        references: {
-          model: 'Tasks',
-          key: 'id', 
-        },
+      routePath: {
+        type: Sequelize.STRING,
         allowNull: false,
-        onUpdate: 'CASCADE',
-        onDelete: 'CASCADE',
       },
       createdAt: {
         type: Sequelize.DATE,

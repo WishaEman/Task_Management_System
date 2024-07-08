@@ -1,28 +1,27 @@
 'use strict';
 
 module.exports = {
-  async up (queryInterface, Sequelize) {
+  async up(queryInterface, Sequelize) {
     await queryInterface.createTable('UserProducts', {
       userId: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Users',  
+          model: 'Users',
           key: 'id',
         },
-        onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
       },
       productId: {
         type: Sequelize.INTEGER,
         allowNull: false,
-        unique: true,
         references: {
-          model: 'Products',  
+          model: 'Products',
           key: 'id',
         },
-        onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
       },
       createdAt: {
         type: Sequelize.DATE,
@@ -31,7 +30,14 @@ module.exports = {
       updatedAt: {
         type: Sequelize.DATE,
         defaultValue: Sequelize.fn('now'),
-      },
+      }
+    });
+
+    // Set the composite primary key
+    await queryInterface.addConstraint('UserProducts', {
+      fields: ['userId', 'productId'],
+      type: 'primary key',
+      name: 'user_product_pkey'
     });
   },
 
@@ -39,4 +45,3 @@ module.exports = {
     await queryInterface.dropTable('UserProducts');
   },
 };
-
