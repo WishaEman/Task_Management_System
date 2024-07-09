@@ -62,7 +62,7 @@ npx sequelize-cli db:migrate:undo
 
 ## 6. Build & Run
 
-## 1. Buid the Project
+### 1. Buid the Project
 ```bash
 npm run build:services
 # or
@@ -70,7 +70,7 @@ yarn build:services
 ```
 This will compile TypeScript files from the src/services folder to JavaScript files in the build/services directory.
 
-## 2. Run the project:
+### 2. Run the project:
 
 ```bash
 npm start/ npm run dev
