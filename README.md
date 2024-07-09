@@ -87,7 +87,7 @@ To facilitate API testing and documentation, a Postman collection has been inclu
 * Open Postman.
 * Click on Import in the top-left corner.
 * Select Choose Files.
-* Navigate to the project directory and select postman_collection.json.
+* Navigate to the project directory and select postman-collection.json.
 * Click Import.
 * This will import the Postman collection, providing examples for Task Management, User Management, Notification Management, and Server Port endpoints.
 
