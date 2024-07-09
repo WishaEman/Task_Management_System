@@ -41,10 +41,26 @@ REDIS_PORT=6379
 
 ## 4. Configuration
 
-** Database Configuration: Update config/config.js with your database credentials or adjust the .env variables to match your database setup.
-** TypeScript Configuration: Modify tsconfig.json if you need to change the TypeScript compilation settings.
+Database Configuration: Update config/config.js with your database credentials or adjust the .env variables to match your database setup.
+TypeScript Configuration: Modify tsconfig.json if you need to change the TypeScript compilation settings.
 
-## 5. Build & Run
+## 5. Migrations
+
+## 1. Generate a new migration:
+```bash
+npx sequelize-cli migration:generate --name <migration-name>
+```
+## 2. Run migrations to create models in the database:
+```bash
+npx sequelize-cli db:migrate
+```
+
+##3. Undo the last migration (if needed):
+```bash
+npx sequelize-cli db:migrate:undo
+```
+
+## 6. Build & Run
 
 ## 1. Buid the Project
 ```bash
