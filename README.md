@@ -79,6 +79,18 @@ yarn start
 ```
 This will start the application in production mode.
 
+## Postman Collection
+To facilitate API testing and documentation, a Postman collection has been included.
+
+1. Import Postman Collection:
+
+* Open Postman.
+* Click on Import in the top-left corner.
+* Select Choose Files.
+* Navigate to the project directory and select postman_collection.json.
+* Click Import.
+* This will import the Postman collection, providing examples for Task Management, User Management, Notification Management, and Server Port endpoints.
+
 ## Contributing
 
 Pull requests are welcome. For major changes, please open an issue first
