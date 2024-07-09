@@ -90,6 +90,7 @@ module.exports = (sequelize, DataTypes) => {
         User.belongsTo(models.User, { foreignKey: 'managerId', as: 'manager' });
         User.hasMany(models.User, { foreignKey: 'managerId', as: 'subordinates' });
         User.hasMany(models.Notification, { foreignKey: 'userId', as: 'notifications' });
+        User.hasMany(models.Task, {foreignKey: 'assignedTo', as: 'assignedTasks' });
         User.belongsToMany(models.Product, {
             through: models.UserProduct,
             as: 'products',

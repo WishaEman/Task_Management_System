@@ -68,4 +68,8 @@ export class UserService {
     return user.manager;
   }
 
+
+  async findUserByEmail(email: string): Promise<UserInstance>{
+    return await User.findOne({ where: { email } });
+  };
 }

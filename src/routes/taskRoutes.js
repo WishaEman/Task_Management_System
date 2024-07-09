@@ -6,5 +6,6 @@ router.post('/user/:userId/product/:productId', TaskController.createTask);
 router.get('/', TaskController.getTasks);
 router.put('/assign', TaskController.assignTasks);
 router.put('/:taskId/status', TaskController.updateTaskStatus);
+router.get('/summary', TaskController.getTaskSummary);
 
 module.exports = router;

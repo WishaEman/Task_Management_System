@@ -1,7 +1,9 @@
 const { body, param, validationResult } = require('express-validator');
 const { UserService } = require('@services/userService');
-
 const userService = new UserService();
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const {client} = require('../config/redis');
 
 exports.createUser = [
   body('firstName').notEmpty().withMessage('First name is required'),
@@ -134,6 +136,31 @@ exports.getManager = [
       res.status(200).json(manager);
     } catch (error) {
       res.status(500).json({ error: error.message });
+    }
+  }
+];
+
+exports.loginUser = [
+  body('email').isEmail().withMessage('Valid email is required'),
+  body('password').isString().withMessage('Password is required'),
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const user = await userService.findUserByEmail(req.body.email);
+      if (!user || !bcrypt.compareSync(req.body.password, user.password)) {
+        return res.status(401).json({ message: 'Invalid email or password' });
+      }
+      const payload = { id: user.id, email: user.email };
+      const token = jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: '5m' });
+
+      await client.setEx(token, 300, JSON.stringify(payload)); 
+      res.json({msg: "Successfully Login" , token });
+    } catch (error) {
+      res.status(500).json({ message: 'Server error', error });
     }
   }
 ];

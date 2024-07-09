@@ -21,6 +21,31 @@ interface GetTasksQuery {
   includeAssigneeDetails?: boolean;
 }
 
+
+interface UserTaskSummary {
+  userId: number;
+  name: string;
+  taskCounts: {
+      total: number;
+      backlog: number;
+      inProgress: number;
+      inQA: number;
+      done: number;
+  };
+}
+
+type UserAttributes =  {
+  id: number;
+  firstName: string;
+  assignedTasks?: TaskAttributes[];
+}
+
+
+type TaskAttributes = {
+  id: number;
+  status: 'backlog' | 'In Progress' | 'In QA' | 'Done';
+}
+
 export class TaskService {
 
   async createTask(data: Partial<TaskInstance>, userId: number, productId: number): Promise<TaskInstance> {
@@ -191,4 +216,59 @@ export class TaskService {
     await task.save();
     return task;
   }
+
+
+  
+  async getTaskSummary(): Promise<{users: UserTaskSummary[], totalUsers: number, totalTasks: number, backlogTasks: number}> {
+    const users = await db.User.findAll({
+      include: [
+        {
+          model: Task,
+          as: 'assignedTasks',
+          attributes: ['status'],
+        },
+      ],
+    });
+  
+    const taskSummary: UserTaskSummary[] = users.map((user: UserAttributes) => {
+      const tasks = user.assignedTasks as TaskAttributes[];
+      const taskCounts: { [key: string]: number } = {
+        total: tasks.length,
+      };
+  
+      // Add other statuses if their count is greater than zero
+      const inProgressCount = tasks.filter((task: TaskAttributes) => task.status === 'In Progress').length;
+      if (inProgressCount > 0) {
+        taskCounts.inProgress = inProgressCount;
+      }
+  
+      const inQACount = tasks.filter((task: TaskAttributes) => task.status === 'In QA').length;
+      if (inQACount > 0) {
+        taskCounts.inQA = inQACount;
+      }
+  
+      const doneCount = tasks.filter((task: TaskAttributes) => task.status === 'Done').length;
+      if (doneCount > 0) {
+        taskCounts.done = doneCount;
+      }
+  
+      return {
+        userId: user.id,
+        username: user.firstName,
+        taskCounts,
+      };
+    });
+  
+    const totalUsers = await db.User.count();
+    const totalTasks = await Task.count();
+    const backlogTasks = await Task.count({ where: { status: 'backlog' } });
+  
+    return {
+      totalUsers,
+      totalTasks,
+      backlogTasks,
+      users: taskSummary,
+    };
+  }
+  
 }
