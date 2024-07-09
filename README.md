@@ -41,12 +41,12 @@ REDIS_PORT=6379
 
 ## 4. Configuration
 
-##Database Configuration: Update config/config.js with your database credentials or adjust the .env variables to match your database setup.
-##TypeScript Configuration: Modify tsconfig.json if you need to change the TypeScript compilation settings.
+## Database Configuration: Update config/config.js with your database credentials or adjust the .env variables to match your database setup.
+## TypeScript Configuration: Modify tsconfig.json if you need to change the TypeScript compilation settings.
 
 ## 5. Build & Run
 
-#1. Buid the Project
+## 1. Buid the Project
 ```bash
 npm run build:services
 # or
