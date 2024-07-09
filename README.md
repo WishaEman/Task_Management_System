@@ -46,16 +46,16 @@ TypeScript Configuration: Modify tsconfig.json if you need to change the TypeScr
 
 ## 5. Migrations
 
-## 1. Generate a new migration:
+### 1. Generate a new migration:
 ```bash
 npx sequelize-cli migration:generate --name <migration-name>
 ```
-## 2. Run migrations to create models in the database:
+### 2. Run migrations to create models in the database:
 ```bash
 npx sequelize-cli db:migrate
 ```
 
-##3. Undo the last migration (if needed):
+### 3. Undo the last migration (if needed):
 ```bash
 npx sequelize-cli db:migrate:undo
 ```
