@@ -1,5 +1,5 @@
 # Task_Management_System
-## It is a Node.js & Sequelize TypeScript Project with JWT Authentication Storing Tokken in Reddis
+## It is a Node.js & Sequelize TypeScript Project with JWT Authentication Storing Token in Reddis
 
 ## Objective:
 Develop a comprehensive task management application designed for developer employees. The application will track and display the tasks developers are working on, including deployment details, branch names, task estimates, statuses, user engagement and more. The system will streamline task assignments, manage server ports, maintain a backlog, generate notifications, establish task precedence.
